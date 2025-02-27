@@ -208,7 +208,7 @@ export const Table9 = (props: Table9Props) => {
                   key={pageNumber}
                   href='#'
                   size='sm'
-                  variant={currentPage === pageNumber ? 'default' : 'link'}
+                  variant={currentPage === pageNumber ? 'secondary' : 'link'}
                   className='px-4 py-2'
                   onClick={(e) => {
                     e.preventDefault();
