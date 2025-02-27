@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Button,
   Table,
@@ -53,28 +53,35 @@ export type Table9Props = React.ComponentPropsWithoutRef<'section'> &
   Partial<Props>;
 
 export const Table9 = (props: Table9Props) => {
-  const { headerTitle, headerDescription, buttons, tableHeaders, tableRows } = {
-    ...Table9Defaults,
-    ...props,
-  } as Props;
+  const {
+    headerTitle = 'Recent Real Estate Transactions',
+    headerDescription = 'Properties sold and represented across Colorado.',
+    buttons = [
+      { children: 'Filter', variant: 'secondary', size: 'sm' },
+      { children: 'View All', size: 'sm' },
+    ],
+    tableHeaders = ['Property', 'Location', 'Price', 'Role', 'Sold Date', ''],
+    tableRows = [],
+  } = props;
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
 
-  // Calculate which rows to display based on current page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentRows = tableRows.slice(indexOfFirstItem, indexOfLastItem);
+  // Use useMemo to prevent unnecessary recalculations
+  const paginationData = useMemo(() => {
+    // Calculate which rows to display based on current page
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentRows = tableRows.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Total number of pages
-  const totalPages = Math.ceil(tableRows.length / itemsPerPage);
+    // Total number of pages
+    const totalPages = Math.ceil(tableRows.length / itemsPerPage);
 
-  // Generate page numbers for pagination
-  const pageNumbers = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
-  }
+    // Generate page numbers for pagination
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    return { currentRows, totalPages, pageNumbers };
+  }, [currentPage, tableRows, itemsPerPage]);
 
   // Handle page changes
   const handlePageChange = (pageNumber: number) => {
@@ -88,7 +95,7 @@ export const Table9 = (props: Table9Props) => {
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) {
+    if (currentPage < paginationData.totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -129,7 +136,7 @@ export const Table9 = (props: Table9Props) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentRows.map((row, rowIndex) => (
+            {paginationData.currentRows.map((row, rowIndex) => (
               <TableRow key={rowIndex}>
                 <TableCell className='flex-1 font-medium'>
                   <div className='grid grid-cols-[max-content_1fr] items-center gap-3'>
@@ -196,7 +203,7 @@ export const Table9 = (props: Table9Props) => {
               />
             </PaginationItem>
             <PaginationItem className='hidden md:block'>
-              {pageNumbers.map((pageNumber) => (
+              {paginationData.pageNumbers.map((pageNumber) => (
                 <PaginationLink
                   key={pageNumber}
                   href='#'
