@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import {
   Button,
   Table,
@@ -135,7 +134,7 @@ export const Table9 = (props: Table9Props) => {
                 <TableCell className='flex-1 font-medium'>
                   <div className='grid grid-cols-[max-content_1fr] items-center gap-3'>
                     <div className='h-12 w-12 relative rounded-full overflow-hidden'>
-                      {/* Using a div with background image as a fallback for Image */}
+                      {/* Using a div with background image as a fallback */}
                       <div
                         className='h-full w-full bg-cover bg-center rounded-full'
                         style={{ backgroundImage: `url(${row.avatar.src})` }}
