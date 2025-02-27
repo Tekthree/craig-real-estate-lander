@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import Image from 'next/image';
 import {
   Button,
   Table,
@@ -47,21 +48,13 @@ type Props = {
   buttons: ButtonProps[];
   tableHeaders: string[];
   tableRows: TableData[];
-  paginationItems: number[];
 };
 
 export type Table9Props = React.ComponentPropsWithoutRef<'section'> &
   Partial<Props>;
 
 export const Table9 = (props: Table9Props) => {
-  const {
-    headerTitle,
-    headerDescription,
-    buttons,
-    tableHeaders,
-    tableRows,
-    paginationItems,
-  } = {
+  const { headerTitle, headerDescription, buttons, tableHeaders, tableRows } = {
     ...Table9Defaults,
     ...props,
   } as Props;
@@ -141,11 +134,13 @@ export const Table9 = (props: Table9Props) => {
               <TableRow key={rowIndex}>
                 <TableCell className='flex-1 font-medium'>
                   <div className='grid grid-cols-[max-content_1fr] items-center gap-3'>
-                    <img
-                      src={row.avatar.src}
-                      alt={row.avatar.alt}
-                      className='h-12 w-12 rounded-full object-cover'
-                    />
+                    <div className='h-12 w-12 relative rounded-full overflow-hidden'>
+                      {/* Using a div with background image as a fallback for Image */}
+                      <div
+                        className='h-full w-full bg-cover bg-center rounded-full'
+                        style={{ backgroundImage: `url(${row.avatar.src})` }}
+                      />
+                    </div>
                     <div>{row.name}</div>
                   </div>
                 </TableCell>
@@ -1162,5 +1157,4 @@ export const Table9Defaults: Table9Props = {
   ],
   tableHeaders: ['Property', 'Location', 'Price', 'Role', 'Sold Date', ''],
   tableRows: generateTableRowsFromCSV(),
-  paginationItems: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
 };
