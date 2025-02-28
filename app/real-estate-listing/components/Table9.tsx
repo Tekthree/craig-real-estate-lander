@@ -28,7 +28,7 @@ import { BiDotsHorizontal } from 'react-icons/bi';
 type TableData = {
   name: string;
   email: string;
-  avatar: { src: string; alt?: string }; // Directly use the inline type here
+  avatar: { src: string; alt?: string };
   createdDate: string;
   addedDate: string;
   fileSize: string;
@@ -42,186 +42,6 @@ type Props = {
   buttons: ButtonProps[];
   tableHeaders: string[];
   tableRows: TableData[];
-};
-
-export type Table9Props = React.ComponentPropsWithoutRef<'section'> &
-  Partial<Props>;
-
-export const Table9 = (props: Table9Props) => {
-  const { headerTitle, headerDescription, buttons, tableHeaders, tableRows } = {
-    ...Table9Defaults,
-    ...props,
-  } as Props;
-
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
-
-  // Calculate which rows to display based on current page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentRows = tableRows.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Total number of pages
-  const totalPages = Math.ceil(tableRows.length / itemsPerPage);
-
-  // Generate page numbers for pagination
-  const pageNumbers = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
-  }
-
-  // Handle page changes
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const handlePrevious = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const tableHeaderClasses = [
-    'w-[302px] pr-4 xxl:w-[430px]',
-    'w-[256px] pr-4 xxl:w-[256px]',
-    'w-[192px] pr-4',
-    'w-[192px] pr-4 xxl:w-[192px]',
-    'w-[128px] pr-4',
-    'w-[80px] pr-4 text-center',
-  ];
-
-  return (
-    <section id='relume' className='px-[5%] py-16 md:py-24 lg:py-28'>
-      <div className='container relative'>
-        <div className='flex flex-col items-start justify-between gap-4 border border-b-0 border-border-primary p-6 sm:flex-row sm:items-center'>
-          <div>
-            <h1 className='mb-1 text-md font-semibold md:text-lg'>
-              {headerTitle}
-            </h1>
-            <p>{headerDescription}</p>
-          </div>
-          <div className='flex gap-4'>
-            {buttons.map((buttonProps, index) => (
-              <Button key={index} {...buttonProps} />
-            ))}
-          </div>
-        </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {tableHeaders.map((header, index) => (
-                <TableHead key={index} className={tableHeaderClasses[index]}>
-                  {header}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentRows.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
-                <TableCell className='flex-1 font-medium'>
-                  <div className='grid grid-cols-[max-content_1fr] items-center gap-3'>
-                    <div className='h-12 w-12 relative rounded-full overflow-hidden'>
-                      {/* Using a div with background image as a fallback */}
-                      <div
-                        className='h-full w-full bg-cover bg-center rounded-full'
-                        style={{ backgroundImage: `url(${row.avatar.src})` }}
-                      />
-                    </div>
-                    <div>{row.name}</div>
-                  </div>
-                </TableCell>
-                <TableCell className='min-w-[12rem] max-w-[16rem]'>
-                  {row.email}
-                </TableCell>
-                <TableCell className='min-w-[8rem] max-w-[12rem]'>
-                  {row.createdDate}
-                </TableCell>
-                <TableCell className='min-w-[8rem] max-w-[12rem]'>
-                  {row.addedDate}
-                </TableCell>
-                <TableCell className='min-w-[8rem] max-w-[6rem]'>
-                  {row.fileSize}
-                </TableCell>
-                <TableCell className='text-center font-semibold'>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <BiDotsHorizontal className='size-6' />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <a
-                        href={row.link}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <DropdownMenuItem key='view'>
-                          View Details
-                        </DropdownMenuItem>
-                      </a>
-                      {row.actions.slice(1).map((action, index) => (
-                        <DropdownMenuItem key={index + 1}>
-                          {action}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <Pagination className='mt-10'>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href='#'
-                size='sm'
-                variant='secondary'
-                onClick={(e) => {
-                  e.preventDefault();
-                  handlePrevious();
-                }}
-              />
-            </PaginationItem>
-            <PaginationItem className='hidden md:block'>
-              {pageNumbers.map((pageNumber) => (
-                <PaginationLink
-                  key={pageNumber}
-                  href='#'
-                  size='sm'
-                  variant={currentPage === pageNumber ? 'default' : 'link'}
-                  className='px-4 py-2'
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handlePageChange(pageNumber);
-                  }}>
-                  {pageNumber}
-                </PaginationLink>
-              ))}
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext
-                href='#'
-                size='sm'
-                variant='secondary'
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNext();
-                }}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-    </section>
-  );
 };
 
 // Generate table rows from the CSV data
@@ -1142,7 +962,8 @@ const generateTableRowsFromCSV = () => {
   });
 };
 
-export const Table9Defaults: Table9Props = {
+// Define defaults outside the component
+const Table9Defaults: Props = {
   headerTitle: 'Recent Real Estate Transactions',
   headerDescription: 'Properties sold and represented across Colorado.',
   buttons: [
@@ -1151,4 +972,188 @@ export const Table9Defaults: Table9Props = {
   ],
   tableHeaders: ['Property', 'Location', 'Price', 'Role', 'Sold Date', ''],
   tableRows: generateTableRowsFromCSV(),
+};
+
+export type Table9Props = React.ComponentPropsWithoutRef<'section'> &
+  Partial<Props>;
+
+export const Table9 = (props: Table9Props) => {
+  // Merge defaults with props in a React Hooks-compliant way
+  const mergedProps = {
+    ...Table9Defaults,
+    ...props,
+  };
+
+  const { headerTitle, headerDescription, buttons, tableHeaders, tableRows } =
+    mergedProps;
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
+
+  // Calculate which rows to display based on current page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentRows = tableRows.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Total number of pages
+  const totalPages = Math.ceil(tableRows.length / itemsPerPage);
+
+  // Generate page numbers for pagination
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  // Handle page changes
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const tableHeaderClasses = [
+    'w-[302px] pr-4 xxl:w-[430px]',
+    'w-[256px] pr-4 xxl:w-[256px]',
+    'w-[192px] pr-4',
+    'w-[192px] pr-4 xxl:w-[192px]',
+    'w-[128px] pr-4',
+    'w-[80px] pr-4 text-center',
+  ];
+
+  return (
+    <section id='relume' className='px-[5%] py-16 md:py-24 lg:py-28'>
+      <div className='container relative'>
+        <div className='flex flex-col items-start justify-between gap-4 border border-b-0 border-border-primary p-6 sm:flex-row sm:items-center'>
+          <div>
+            <h1 className='mb-1 text-md font-semibold md:text-lg'>
+              {headerTitle}
+            </h1>
+            <p>{headerDescription}</p>
+          </div>
+          <div className='flex gap-4'>
+            {buttons.map((buttonProps, index) => (
+              <Button key={index} {...buttonProps} />
+            ))}
+          </div>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {tableHeaders.map((header, index) => (
+                <TableHead key={index} className={tableHeaderClasses[index]}>
+                  {header}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentRows.map((row, rowIndex) => (
+              <TableRow key={rowIndex}>
+                <TableCell className='flex-1 font-medium'>
+                  <div className='grid grid-cols-[max-content_1fr] items-center gap-3'>
+                    <div className='h-12 w-12 relative rounded-full overflow-hidden'>
+                      {/* Using a div with background image as a fallback */}
+                      <div
+                        className='h-full w-full bg-cover bg-center rounded-full'
+                        style={{ backgroundImage: `url(${row.avatar.src})` }}
+                      />
+                    </div>
+                    <div>{row.name}</div>
+                  </div>
+                </TableCell>
+                <TableCell className='min-w-[12rem] max-w-[16rem]'>
+                  {row.email}
+                </TableCell>
+                <TableCell className='min-w-[8rem] max-w-[12rem]'>
+                  {row.createdDate}
+                </TableCell>
+                <TableCell className='min-w-[8rem] max-w-[12rem]'>
+                  {row.addedDate}
+                </TableCell>
+                <TableCell className='min-w-[8rem] max-w-[6rem]'>
+                  {row.fileSize}
+                </TableCell>
+                <TableCell className='text-center font-semibold'>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <BiDotsHorizontal className='size-6' />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <a
+                        href={row.link}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <DropdownMenuItem key='view'>
+                          View Details
+                        </DropdownMenuItem>
+                      </a>
+                      {row.actions.slice(1).map((action, index) => (
+                        <DropdownMenuItem key={index + 1}>
+                          {action}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <Pagination className='mt-10'>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href='#'
+                size='sm'
+                variant='secondary'
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePrevious();
+                }}
+              />
+            </PaginationItem>
+            <PaginationItem className='hidden md:block'>
+              {pageNumbers.map((pageNumber) => (
+                <PaginationLink
+                  key={pageNumber}
+                  href='#'
+                  size='sm'
+                  variant={currentPage === pageNumber ? 'default' : 'link'}
+                  className='px-4 py-2'
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(pageNumber);
+                  }}>
+                  {pageNumber}
+                </PaginationLink>
+              ))}
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext
+                href='#'
+                size='sm'
+                variant='secondary'
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNext();
+                }}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
+    </section>
+  );
 };
