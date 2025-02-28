@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Table,
@@ -25,15 +25,10 @@ import {
 } from '@relume_io/relume-ui';
 import { BiDotsHorizontal } from 'react-icons/bi';
 
-type ImageProps = {
-  src: string;
-  alt?: string;
-};
-
 type TableData = {
   name: string;
   email: string;
-  avatar: ImageProps;
+  avatar: { src: string; alt?: string }; // Directly use the inline type here
   createdDate: string;
   addedDate: string;
   fileSize: string;
@@ -53,35 +48,28 @@ export type Table9Props = React.ComponentPropsWithoutRef<'section'> &
   Partial<Props>;
 
 export const Table9 = (props: Table9Props) => {
-  const {
-    headerTitle = 'Recent Real Estate Transactions',
-    headerDescription = 'Properties sold and represented across Colorado.',
-    buttons = [
-      { children: 'Filter', variant: 'secondary', size: 'sm' },
-      { children: 'View All', size: 'sm' },
-    ],
-    tableHeaders = ['Property', 'Location', 'Price', 'Role', 'Sold Date', ''],
-    tableRows = [],
-  } = props;
+  const { headerTitle, headerDescription, buttons, tableHeaders, tableRows } = {
+    ...Table9Defaults,
+    ...props,
+  } as Props;
 
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
 
-  // Use useMemo to prevent unnecessary recalculations
-  const paginationData = useMemo(() => {
-    // Calculate which rows to display based on current page
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentRows = tableRows.slice(indexOfFirstItem, indexOfLastItem);
+  // Calculate which rows to display based on current page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentRows = tableRows.slice(indexOfFirstItem, indexOfLastItem);
 
-    // Total number of pages
-    const totalPages = Math.ceil(tableRows.length / itemsPerPage);
+  // Total number of pages
+  const totalPages = Math.ceil(tableRows.length / itemsPerPage);
 
-    // Generate page numbers for pagination
-    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
-    return { currentRows, totalPages, pageNumbers };
-  }, [currentPage, tableRows, itemsPerPage]);
+  // Generate page numbers for pagination
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
 
   // Handle page changes
   const handlePageChange = (pageNumber: number) => {
@@ -95,7 +83,7 @@ export const Table9 = (props: Table9Props) => {
   };
 
   const handleNext = () => {
-    if (currentPage < paginationData.totalPages) {
+    if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -136,7 +124,7 @@ export const Table9 = (props: Table9Props) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginationData.currentRows.map((row, rowIndex) => (
+            {currentRows.map((row, rowIndex) => (
               <TableRow key={rowIndex}>
                 <TableCell className='flex-1 font-medium'>
                   <div className='grid grid-cols-[max-content_1fr] items-center gap-3'>
@@ -203,12 +191,12 @@ export const Table9 = (props: Table9Props) => {
               />
             </PaginationItem>
             <PaginationItem className='hidden md:block'>
-              {paginationData.pageNumbers.map((pageNumber) => (
+              {pageNumbers.map((pageNumber) => (
                 <PaginationLink
                   key={pageNumber}
                   href='#'
                   size='sm'
-                  variant={currentPage === pageNumber ? 'secondary' : 'link'}
+                  variant={currentPage === pageNumber ? 'default' : 'link'}
                   className='px-4 py-2'
                   onClick={(e) => {
                     e.preventDefault();
