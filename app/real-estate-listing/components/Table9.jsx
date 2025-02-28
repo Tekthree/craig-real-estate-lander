@@ -952,14 +952,14 @@ const DEFAULT_TABLE_ROWS = generateTableData();
 
 // Main component
 export class Table9 extends React.Component {
-  // Table header classes
+  // Table header classes - updated for the luxury style
   tableHeaderClasses = [
-    'w-[302px] pr-4 xxl:w-[430px]',
-    'w-[256px] pr-4 xxl:w-[256px]',
-    'w-[192px] pr-4',
-    'w-[192px] pr-4 xxl:w-[192px]',
-    'w-[128px] pr-4',
-    'w-[80px] pr-4 text-center',
+    'w-[302px] pr-4 xxl:w-[430px] text-gray-400 font-medium',
+    'w-[256px] pr-4 xxl:w-[256px] text-gray-400 font-medium',
+    'w-[192px] pr-4 text-gray-400 font-medium',
+    'w-[192px] pr-4 xxl:w-[192px] text-gray-400 font-medium',
+    'w-[128px] pr-4 text-gray-400 font-medium',
+    'w-[80px] pr-4 text-center text-gray-400 font-medium',
   ];
 
   constructor(props) {
@@ -1013,14 +1013,16 @@ export class Table9 extends React.Component {
     }
 
     return (
-      <section id='relume' className='px-[5%] py-16 md:py-24 lg:py-28'>
+      <section
+        id='relume'
+        className='px-[5%] py-16 md:py-24 lg:py-28 bg-black text-white'>
         <div className='container relative'>
-          <div className='flex flex-col items-start justify-between gap-4 border border-b-0 border-border-primary p-6 sm:flex-row sm:items-center'>
+          <div className='flex flex-col items-start justify-between gap-4 border border-b-0 border-gray-800 p-6 sm:flex-row sm:items-center bg-gray-900 rounded-t-xl'>
             <div>
               <h1 className='mb-1 text-md font-semibold md:text-lg'>
                 {headerTitle}
               </h1>
-              <p>{headerDescription}</p>
+              <p className='text-gray-400'>{headerDescription}</p>
             </div>
             <div className='flex gap-4'>
               {buttons.map((btn, idx) => (
@@ -1029,7 +1031,11 @@ export class Table9 extends React.Component {
                   variant={btn.variant}
                   size={btn.size}
                   disabled={btn.disabled}
-                  className={btn.className}
+                  className={`${btn.className} ${
+                    idx === 0
+                      ? 'border border-gray-700 hover:bg-gray-800 text-white'
+                      : 'bg-yellow-500 text-black hover:bg-yellow-600'
+                  }`}
                   onClick={btn.onClick}>
                   {btn.children}
                 </Button>
@@ -1037,9 +1043,9 @@ export class Table9 extends React.Component {
             </div>
           </div>
 
-          <Table>
+          <Table className='bg-gray-900 rounded-b-xl border border-gray-800 '>
             <TableHeader>
-              <TableRow>
+              <TableRow className='border-b border-gray-800'>
                 {tableHeaders.map((header, idx) => (
                   <TableHead key={idx} className={this.tableHeaderClasses[idx]}>
                     {header}
@@ -1050,12 +1056,14 @@ export class Table9 extends React.Component {
 
             <TableBody>
               {currentRows.map((row, rowIdx) => (
-                <TableRow key={rowIdx}>
+                <TableRow
+                  key={rowIdx}
+                  className='hover:bg-gray-800 border-b border-gray-800'>
                   <TableCell className='flex-1 font-medium'>
                     <div className='grid grid-cols-[max-content_1fr] items-center gap-3'>
-                      <div className='h-12 w-12 relative rounded-full overflow-hidden'>
+                      <div className='h-12 w-12 relative rounded-xl overflow-hidden'>
                         <div
-                          className='h-full w-full bg-cover bg-center rounded-full'
+                          className='h-full w-full bg-cover bg-center'
                           style={{ backgroundImage: `url(${row.avatar.src})` }}
                         />
                       </div>
@@ -1063,41 +1071,45 @@ export class Table9 extends React.Component {
                     </div>
                   </TableCell>
 
-                  <TableCell className='min-w-[12rem] max-w-[16rem]'>
+                  <TableCell className='min-w-[12rem] max-w-[16rem] text-gray-300'>
                     {row.email}
                   </TableCell>
 
-                  <TableCell className='min-w-[8rem] max-w-[12rem]'>
+                  <TableCell className='min-w-[8rem] max-w-[12rem] text-gray-300'>
                     {row.createdDate}
                   </TableCell>
 
-                  <TableCell className='min-w-[8rem] max-w-[12rem]'>
+                  <TableCell className='min-w-[8rem] max-w-[12rem] text-gray-300'>
                     {row.addedDate}
                   </TableCell>
 
-                  <TableCell className='min-w-[8rem] max-w-[6rem]'>
+                  <TableCell className='min-w-[8rem] max-w-[6rem] text-gray-300'>
                     {row.fileSize}
                   </TableCell>
 
                   <TableCell className='text-center font-semibold'>
                     <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <BiDotsHorizontal className='size-6' />
+                      <DropdownMenuTrigger className='p-2 rounded-xl hover:bg-gray-700'>
+                        <BiDotsHorizontal className='size-5 text-gray-400' />
                       </DropdownMenuTrigger>
 
-                      <DropdownMenuContent>
+                      <DropdownMenuContent className='bg-gray-800 border border-gray-700 rounded-xl'>
                         <a
                           href={row.link}
                           target='_blank'
                           rel='noopener noreferrer'
                           style={{ textDecoration: 'none', color: 'inherit' }}>
-                          <DropdownMenuItem key='view'>
+                          <DropdownMenuItem
+                            key='view'
+                            className='hover:bg-gray-700'>
                             View Details
                           </DropdownMenuItem>
                         </a>
 
                         {row.actions.slice(1).map((action, actionIdx) => (
-                          <DropdownMenuItem key={actionIdx + 1}>
+                          <DropdownMenuItem
+                            key={actionIdx + 1}
+                            className='hover:bg-gray-700'>
                             {action}
                           </DropdownMenuItem>
                         ))}
@@ -1109,13 +1121,14 @@ export class Table9 extends React.Component {
             </TableBody>
           </Table>
 
-          <Pagination className='mt-10'>
+          <Pagination className='mt-10 flex justify-center border-t border-gray-800 pt-6 pb-6 px-6 bg-gray-900 rounded-xl'>
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
                   href='#'
                   size='sm'
                   variant='secondary'
+                  className='border border-gray-700 text-white hover:bg-gray-800'
                   onClick={(e) => {
                     e.preventDefault();
                     this.handlePrevious();
@@ -1130,7 +1143,11 @@ export class Table9 extends React.Component {
                     href='#'
                     size='sm'
                     variant={currentPage === num ? 'primary' : 'link'}
-                    className='px-4 py-2'
+                    className={`px-4 py-2 ${
+                      currentPage === num
+                        ? 'bg-yellow-500 text-black'
+                        : 'text-white hover:bg-gray-800'
+                    }`}
                     onClick={(e) => {
                       e.preventDefault();
                       this.handlePageChange(num);
@@ -1145,6 +1162,7 @@ export class Table9 extends React.Component {
                   href='#'
                   size='sm'
                   variant='secondary'
+                  className='border border-gray-700 text-white hover:bg-gray-800'
                   onClick={(e) => {
                     e.preventDefault();
                     this.handleNext();
